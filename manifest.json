@@ -1,6 +1,6 @@
 {
-  "name": "Budget Tracker App",
-  "short_name": "BudgetTrack",
+  "name": "Jax Budget Tracker",
+  "short_name": "Budget",
   "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#f4f7f6",
