@@ -40,8 +40,8 @@ body {
 
 .tab-btn.active {
     background-color: #fff;
-    color: #28a745;
-    border-bottom: 2px solid #28a745;
+    color: #008aaa;
+    border-bottom: 2px solid #008aaa;
 }
 
 .tab-content {
@@ -62,9 +62,9 @@ body {
 .cat-btn {
     flex: 1;
     padding: 12px 5px;
-    border: 2px solid #28a745;
+    border: 2px solid #008aaa;
     background: #fff;
-    color: #28a745;
+    color: #008aaa;
     border-radius: 6px;
     font-weight: bold;
     cursor: pointer;
@@ -73,7 +73,7 @@ body {
 }
 
 .cat-btn.active {
-    background-color: #28a745;
+    background-color: #008aaa;
     color: #fff;
 }
 
@@ -125,7 +125,7 @@ body {
 }
 
 .input-group:focus-within {
-    border-color: #28a745;
+    border-color: #008aaa;
 }
 
 .currency-symbol {
@@ -144,7 +144,7 @@ body {
 }
 
 .action-btn {
-    background-color: #28a745;
+    background-color: #008aaa;
     color: #fff;
     border: none;
     padding: 15px;
@@ -156,7 +156,7 @@ body {
 }
 
 .action-btn:hover {
-    background-color: #218838;
+    background-color: #00628a;
 }
 
 h2 {
@@ -208,7 +208,7 @@ h2 {
     align-items: center;
     padding: 14px;
     background-color: #f8f9fa;
-    border-left: 4px solid #28a745;
+    border-left: 4px solid #008aaa;
     border-radius: 6px;
     cursor: pointer;
     border-top: 1px solid #e9ecef;
@@ -310,7 +310,7 @@ h2 {
 }
 
 .modal-box input:focus {
-    border-color: #28a745;
+    border-color: #008aaa;
 }
 
 .modal-actions {
