@@ -1,8 +1,7 @@
-const CACHE_NAME = 'budget-tracker-v2';
+const CACHE_NAME = 'budget-tracker-v1';
 const ASSETS = [
   './',
   './index.html',
-  './style.css',
   './script.js',
   './manifest.json',
   './assets/db192.png',
