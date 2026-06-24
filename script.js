@@ -1,40 +1,79 @@
-const STARTING_BALANCES = {
-    "Groceries": 4800,
-    "Excursions": 9600,
-    "Gifts/Parties": 1200
-};
+const BASE_EXPENSES = 500;
+const BASE_SPENDING = 1000;
 
 let budgets = {
-    "Groceries": { remaining: 4800 },
-    "Excursions": { remaining: 9600 },
-    "Gifts/Parties": { remaining: 1200 }
+    "Expenses": { remaining: BASE_EXPENSES },
+    "Spending": { remaining: BASE_SPENDING }
 };
+
 let transactionHistory = []; 
-let currentCategory = "Groceries";
+let currentCategory = "Expenses";
 let editingTxId = null; 
 
 function loadData() {
     const savedHistory = localStorage.getItem('budgetTrackerHistory');
-    const lastResetYear = localStorage.getItem('lastResetYear');
-    
+    const savedMonth = localStorage.getItem('lastMonth');
+    const savedCarry = localStorage.getItem('spendingCarry');
+
     if (savedHistory) transactionHistory = JSON.parse(savedHistory);
 
     const now = new Date();
+    const currentMonth = now.getMonth();
     const currentYear = now.getFullYear();
-    const isFeb1stOrLater = (now.getMonth() === 1 && now.getDate() >= 1) || now.getMonth() > 1;
 
-    if (isFeb1stOrLater && (!lastResetYear || parseInt(lastResetYear) < currentYear)) {
-        transactionHistory.push({
-            id: 'system-' + Date.now(),
-            category: 'System',
-            date: new Date(currentYear, 1, 1, 0, 0, 0).toISOString(),
-            amount: 0,
-            isSystemMarker: true,
-            label: `--- Fiscal Year ${currentYear} Started ---`
-        });
-        localStorage.setItem('lastResetYear', currentYear.toString());
+    if (!savedMonth) {
+        localStorage.setItem('lastMonth', currentMonth);
+        localStorage.setItem('spendingCarry', "0");
+    } else {
+        const lastMonth = parseInt(savedMonth);
+
+        if (currentMonth !== lastMonth) {
+            applyMonthlyReset(lastMonth, currentMonth, currentYear);
+        }
     }
-    recalculateBalances(); 
+
+    recalculateBalances();
+}
+
+function applyMonthlyReset(lastMonth, currentMonth, currentYear) {
+    const monthDiff = currentMonth - lastMonth;
+
+    // Handle year wrap (Dec → Jan)
+    const normalizedDiff = monthDiff < 0 ? monthDiff + 12 : monthDiff;
+
+    let newCarry = 0;
+
+    if (normalizedDiff === 1) {
+        // Only apply rollover if exactly one month passed
+        let spent = 0;
+
+        transactionHistory.forEach(tx => {
+            if (tx.category === "Spending") {
+                const txMonth = new Date(tx.date).getMonth();
+                if (txMonth === lastMonth) spent += tx.amount;
+            }
+        });
+
+        const leftover = BASE_SPENDING - spent;
+        newCarry = Math.max(leftover, 0);
+    } else {
+        // If more than one month passed, no rollover
+        newCarry = 0;
+    }
+
+    localStorage.setItem('spendingCarry', newCarry.toString());
+
+    // Add system marker
+    transactionHistory.push({
+        id: 'system-' + Date.now(),
+        category: 'System',
+        date: new Date(currentYear, currentMonth, 1).toISOString(),
+        amount: 0,
+        isSystemMarker: true,
+        label: `--- New Month Started (${currentMonth + 1}/${currentYear}) ---`
+    });
+
+    localStorage.setItem('lastMonth', currentMonth);
 }
 
 function saveToStorage() {
@@ -56,15 +95,14 @@ function switchTab(tabId) {
 
 function selectCategory(category) {
     currentCategory = category;
+
     document.querySelectorAll('.cat-btn').forEach(btn => btn.classList.remove('active'));
-    
-    const safeId = "btn-" + category.replace("/", "-");
-    const catBtn = document.getElementById(safeId);
-    if (catBtn) catBtn.classList.add('active');
-    
-    const titleEl = document.getElementById('current-title');
-    if (titleEl) titleEl.innerText = category;
-    
+
+    const btn = document.getElementById("btn-" + category);
+    if (btn) btn.classList.add('active');
+
+    document.getElementById('current-title').innerText = category;
+
     updateDisplay();
 }
 
@@ -74,6 +112,13 @@ function updateDisplay() {
     if (amountEl && budget) {
         amountEl.innerText = budget.remaining.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
     }
+    const startLabel = document.getElementById('start-label');
+if (startLabel) {
+    const now = new Date();
+    const monthName = now.toLocaleString('default', { month: 'long' });
+startLabel.innerText = monthName;
+}
+
 }
 
 function handleEnter() {
@@ -100,16 +145,21 @@ function handleEnter() {
 }
 
 function recalculateBalances() {
-    for (let cat in budgets) {
-        budgets[cat].remaining = STARTING_BALANCES[cat];
-    }
-    let chronologicalHistory = [...transactionHistory].sort((a,b) => new Date(a.date) - new Date(b.date));
-    
-    chronologicalHistory.forEach(tx => {
+    // Reset base values
+    budgets["Expenses"].remaining = BASE_EXPENSES;
+
+    const carry = parseFloat(localStorage.getItem('spendingCarry')) || 0;
+    budgets["Spending"].remaining = BASE_SPENDING + carry;
+
+    // Apply all transactions
+    let chronological = [...transactionHistory].sort((a,b) => new Date(a.date) - new Date(b.date));
+
+    chronological.forEach(tx => {
         if (!tx.isSystemMarker && budgets[tx.category]) {
             budgets[tx.category].remaining -= tx.amount;
         }
     });
+
     saveToStorage();
     updateDisplay();
 }
@@ -242,8 +292,9 @@ window.deleteTransaction = deleteTransaction;
 // Fire up once DOM elements exist
 document.addEventListener("DOMContentLoaded", () => {
     loadData();
-    switchTab('tracker');
-    selectCategory('Groceries');
+switchTab('tracker');
+selectCategory('Expenses');
+updateDisplay();
 });
 
 if ('serviceWorker' in navigator) {

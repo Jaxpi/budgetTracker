@@ -1,79 +1,107 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Budget Tracker</title>
-    <link rel="stylesheet" href="style.css">
-    <link rel="manifest" href="manifest.json">
-
-</head>
-<body>
+    <link rel="stylesheet" href="style.css" />
+    <link rel="manifest" href="manifest.json" />
+  </head>
+  <body>
     <div class="app-container">
-        <!-- Navigation Tabs -->
-        <nav class="tabs">
-            <button class="tab-btn active" id="nav-tracker" onclick="switchTab('tracker')">Tracker</button>
-            <button class="tab-btn" id="nav-history" onclick="switchTab('history')">History</button>
-        </nav>
+      <!-- Navigation Tabs -->
+      <nav class="tabs">
+        <button
+          class="tab-btn active"
+          id="nav-tracker"
+          onclick="switchTab('tracker')"
+        >
+          Tracker
+        </button>
+        <button class="tab-btn" id="nav-history" onclick="switchTab('history')">
+          History
+        </button>
+      </nav>
 
-        <!-- Tracker Tab -->
-        <div id="tracker" class="tab-content active">
-            <!-- Category Selection -->
-            <div class="category-buttons">
-                <button class="cat-btn active" id="btn-Groceries" onclick="selectCategory('Groceries')">Groceries</button>
-                <button class="cat-btn" id="btn-Excursions" onclick="selectCategory('Excursions')">Excursions</button>
-                <button class="cat-btn" id="btn-Gifts-Parties" onclick="selectCategory('Gifts/Parties')">Gifts/Parties</button>
-            </div>
-
-            <!-- Display Area -->
-            <div class="amount-display">
-                <h3 id="current-title">Groceries</h3>
-                <div class="amount-val">$<span id="remaining-amount">4,800.00</span></div>
-                <p>Started: Feb 1st</p>
-            </div>
-
-            <!-- Input Area -->
-            <div class="input-section">
-                <label for="spend-amount">Enter amount spent:</label>
-                <div class="input-group">
-                    <span class="currency-symbol">$</span>
-                    <input type="number" id="spend-amount" placeholder="0.00" step="0.01" inputmode="decimal">
-                </div>
-                <button class="action-btn" onclick="handleEnter()">Enter</button>
-            </div>
+      <!-- Tracker Tab -->
+      <div id="tracker" class="tab-content active">
+        <!-- Category Selection -->
+        <div class="category-buttons">
+          <button
+            class="cat-btn active"
+            id="btn-Expenses"
+            onclick="selectCategory('Expenses')"
+          >
+            Expenses
+          </button>
+          <button
+            class="cat-btn"
+            id="btn-Spending"
+            onclick="selectCategory('Spending')"
+          >
+            Spending
+          </button>
         </div>
 
-        <!-- History Tab -->
-        <div id="history" class="tab-content">
-            <h2>Transaction History</h2>
-            
-            <div class="history-controls">
-                <button class="ctrl-btn btn-download" onclick="downloadHistory()">📥 Download JSON</button>
-                <button class="ctrl-btn btn-clear" onclick="clearAllHistory()">⚠️ Wipe History</button>
-            </div>
-
-            <div id="history-list" class="history-list">
-                <!-- History items will populate here -->
-            </div>
+        <!-- Display Area -->
+        <div class="amount-display">
+          <h3 id="current-title">Expenses</h3>
+          <div class="amount-val">$<span id="remaining-amount">0.00</span></div>
+          <p id="start-label"></p>
         </div>
+
+        <!-- Input Area -->
+        <div class="input-section">
+          <label for="spend-amount">Enter amount spent:</label>
+          <div class="input-group">
+            <span class="currency-symbol">$</span>
+            <input
+              type="number"
+              id="spend-amount"
+              placeholder="0.00"
+              step="0.01"
+              inputmode="decimal"
+            />
+          </div>
+          <button class="action-btn" onclick="handleEnter()">Enter</button>
+        </div>
+      </div>
+
+      <!-- History Tab -->
+      <div id="history" class="tab-content">
+        <h2>Transaction History</h2>
+
+        <div class="history-controls">
+          <button class="ctrl-btn btn-download" onclick="downloadHistory()">
+            Download JSON
+          </button>
+          <button class="ctrl-btn btn-clear" onclick="clearAllHistory()">
+            Wipe History
+          </button>
+        </div>
+
+        <div id="history-list" class="history-list">
+          <!-- History items will populate here -->
+        </div>
+      </div>
     </div>
 
     <!-- Edit Modal Element Placement -->
     <div id="editModal" class="modal-overlay">
-        <div class="modal-box">
-            <h3>Modify Record</h3>
-            <label for="edit-amount">Amount Spent ($):</label>
-            <input type="number" id="edit-amount" step="0.01">
-            <label for="edit-date">Adjust Transaction Time:</label>
-            <input type="datetime-local" id="edit-date">
-            <div class="modal-actions">
-                <button class="save-btn" onclick="saveEdit()">Save Changes</button>
-                <button class="del-btn" onclick="deleteTransaction()">Delete</button>
-                <button class="cancel-btn" onclick="closeEditModal()">Cancel</button>
-            </div>
+      <div class="modal-box">
+        <h3>Modify Record</h3>
+        <label for="edit-amount">Amount Spent ($):</label>
+        <input type="number" id="edit-amount" step="0.01" />
+        <label for="edit-date">Adjust Transaction Time:</label>
+        <input type="datetime-local" id="edit-date" />
+        <div class="modal-actions">
+          <button class="save-btn" onclick="saveEdit()">Save Changes</button>
+          <button class="del-btn" onclick="deleteTransaction()">Delete</button>
+          <button class="cancel-btn" onclick="closeEditModal()">Cancel</button>
         </div>
+      </div>
     </div>
-    
+
     <script src="script.js"></script>
-</body>
+  </body>
 </html>
